@@ -1,770 +1,402 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>MBAC Staff & Admin Attendance | 300min auto / 50min precise override</title>
-  <!-- Font Awesome 6 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Panel — MbAC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-    }
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',Roboto,system-ui,sans-serif; }
+    body { background:linear-gradient(145deg,#eef2f7,#d9e0eb); min-height:100vh; padding:20px; color:#1e2f4e; }
+    .container { max-width:1100px; margin:0 auto; }
+    .topbar { background:linear-gradient(120deg,#1e3a5f,#2b4b77); color:#fff; padding:18px 26px; border-radius:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; flex-wrap:wrap; box-shadow:0 12px 28px -12px rgba(10,25,50,0.5); }
+    .topbar .brand { display:flex; align-items:center; gap:14px; }
+    .logo { width:52px; height:52px; border-radius:16px; background:linear-gradient(135deg,#f5b942,#d98c00); display:flex; align-items:center; justify-content:center; font-family:Georgia,serif; font-weight:900; font-size:17px; color:#1e2f4e; }
+    .topbar h1 { font-size:19px; font-weight:700; }
+    .topbar .sub { font-size:12px; color:#b8cde3; letter-spacing:1.2px; text-transform:uppercase; margin-top:2px; }
 
-    body {
-      background: #eef2fa;
-      padding: 20px;
-    }
+    .card { background:#fff; border-radius:24px; padding:28px 30px; box-shadow:0 12px 28px -16px rgba(30,50,80,0.25); border:1px solid #e7eff9; margin-bottom:20px; }
+    .card h2 { font-size:22px; color:#1e2f4e; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+    .card h2 i { color:#3a6ea5; }
+    .card p.hint { color:#6e86a5; font-size:14px; margin-bottom:20px; }
 
-    .app-container {
-      max-width: 1300px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 32px;
-      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.2);
-      overflow: hidden;
-    }
+    .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .form-field { display:flex; flex-direction:column; gap:6px; }
+    .form-field.full { grid-column:1 / -1; }
+    .form-field label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#5e7392; }
+    .form-field input, .form-field select { padding:12px 16px; border:1.5px solid #d4e0f0; border-radius:14px; font-size:14.5px; background:#f9fcff; outline:none; color:#1e2f4e; transition:0.2s; }
+    .form-field input:focus, .form-field select:focus { border-color:#3a6ea5; background:#fff; box-shadow:0 0 0 3px rgba(58,110,165,0.12); }
 
-    .navbar {
-      background: linear-gradient(135deg, #0a2e38 0%, #124c5c 100%);
-      padding: 1rem 2rem;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      border-bottom: 3px solid #f4b942;
-    }
+    .btn { padding:14px 28px; border:none; border-radius:30px; font-size:15px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:10px; transition:0.22s; background:#1e3a5f; color:#fff; box-shadow:0 10px 20px -10px #1e3a5f; }
+    .btn:hover { background:#2b4b77; transform:translateY(-2px); }
+    .btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+    .btn.secondary { background:#eef4fc; color:#1e3a5f; border:1px solid #d4e2f2; box-shadow:none; }
+    .btn.secondary:hover { background:#dbe7f5; }
+    .btn-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; }
 
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+    .hidden { display:none !important; }
 
-    .logo {
-      background: #f4b942;
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 24px;
-      color: #0a2e38;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
+    .profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:6px; }
+    .profile-item { background:#f6faff; border:1px solid #e2ebf5; border-radius:14px; padding:12px 16px; }
+    .profile-item .lbl { font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#6e86a5; font-weight:700; margin-bottom:3px; }
+    .profile-item .val { color:#1e2f4e; font-weight:600; font-size:15px; word-break:break-word; }
 
-    .college-name h1 {
-      font-size: 1.5rem;
-      color: white;
-      letter-spacing: 1px;
-    }
+    .error-msg { color:#c0392b; font-size:13.5px; margin-top:12px; font-weight:500; text-align:center; }
+    .success-msg { color:#1e8449; font-size:13.5px; margin-top:12px; font-weight:500; text-align:center; }
 
-    .college-name p {
-      font-size: 0.75rem;
-      color: #ffe0a3;
-    }
+    .toast { position:fixed; bottom:24px; right:24px; background:#1e3a5f; color:#fff; padding:14px 22px; border-radius:16px; box-shadow:0 14px 30px -10px rgba(0,20,60,0.4); font-size:14.5px; opacity:0; transform:translateY(20px); transition:0.3s; pointer-events:none; z-index:99999; max-width:340px; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .toast.error { background:#c0392b; }
+    .toast.success { background:#1e8449; }
 
-    .datetime {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(4px);
-      padding: 8px 18px;
-      border-radius: 60px;
-      color: white;
-      font-weight: 500;
-      font-size: 0.9rem;
-      text-align: center;
-    }
+    .modal-backdrop { position:fixed; inset:0; background:rgba(10,25,45,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; }
+    .modal { background:#fff; border-radius:24px; padding:30px 28px; max-width:440px; width:100%; text-align:center; box-shadow:0 25px 60px -20px rgba(0,20,50,0.5); }
+    .modal h3 { font-size:20px; margin-bottom:10px; color:#1e2f4e; }
+    .modal p { font-size:14.5px; color:#5b6f8c; margin-bottom:22px; line-height:1.5; }
+    .modal .buttons { display:flex; gap:12px; justify-content:center; }
 
-    .dashboard {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 28px;
-      padding: 30px 28px;
-      background: #fefefe;
-    }
+    /* Announcements */
+    .announcements-panel { margin-bottom:20px; }
+    .announcement-card { background:#fff; border-radius:20px; padding:18px 22px; margin-bottom:14px; border-left:5px solid #3a6ea5; box-shadow:0 8px 18px -10px rgba(30,50,80,0.2); }
+    .announcement-card.urgent { border-left-color:#c0392b; background:#fff7f7; }
+    .announcement-card.high   { border-left-color:#e67e22; background:#fffaf5; }
+    .announcement-card.low    { border-left-color:#8aa4c1; }
+    .announcement-card.request { border-left-color:#6c5ce7; background:#faf8ff; }
+    .announcement-card.notification { border-left-color:#0d9b8a; background:#f5fdfb; }
+    .announcement-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:8px; flex-wrap:wrap; }
+    .announcement-title { font-size:15.5px; font-weight:700; color:#1e2f4e; }
+    .announcement-tags { display:flex; gap:6px; flex-wrap:wrap; }
+    .announcement-tag { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; padding:3px 9px; border-radius:12px; background:#eef2f7; color:#5b6f8c; }
+    .announcement-tag.urgent { background:#ffe3e3; color:#c0392b; }
+    .announcement-tag.high   { background:#ffe9d1; color:#b26b00; }
+    .announcement-tag.normal { background:#e3efff; color:#2b7de9; }
+    .announcement-tag.low    { background:#eef2f7; color:#5b6f8c; }
+    .announcement-tag.announcement { background:#e3efff; color:#2b7de9; }
+    .announcement-tag.notification { background:#dcf5f0; color:#0d9b8a; }
+    .announcement-tag.request      { background:#efe6ff; color:#6c5ce7; }
+    .announcement-body { font-size:14px; color:#33425e; line-height:1.55; margin-bottom:8px; }
+    .announcement-meta { font-size:12px; color:#8aa4c1; display:flex; gap:12px; flex-wrap:wrap; }
 
-    .form-section {
-      flex: 2;
-      min-width: 300px;
-      background: #ffffff;
-      border-radius: 28px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-      border: 1px solid #eef2f8;
-    }
-
-    .history-section {
-      flex: 1.5;
-      min-width: 300px;
-      background: #f9fbfe;
-      border-radius: 28px;
-      padding: 24px;
-      border: 1px solid #eef2f6;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.02);
-    }
-
-    h2 {
-      font-size: 1.5rem;
-      margin-bottom: 1.2rem;
-      color: #0a2e38;
-      border-left: 5px solid #f4b942;
-      padding-left: 14px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 6px;
-      color: #1e4a5c;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #d4e2ed;
-      border-radius: 20px;
-      font-size: 0.95rem;
-      transition: 0.2s;
-      background: white;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #f4b942;
-      box-shadow: 0 0 0 3px rgba(244,185,66,0.2);
-    }
-
-    .role-badge {
-      background: #f0f4f9;
-      border-radius: 28px;
-      padding: 6px 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #124c5c;
-      display: inline-block;
-      margin-bottom: 8px;
-    }
-
-    .btn {
-      background: #0a2e38;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      margin-top: 8px;
-      width: 100%;
-      font-size: 1rem;
-    }
-
-    .btn-checkin {
-      background: #2a7f6e;
-    }
-    .btn-checkout {
-      background: #c96f0e;
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.05);
-    }
-
-    .dual-buttons {
-      display: flex;
-      gap: 12px;
-      margin: 12px 0 4px;
-    }
-
-    .history-list {
-      max-height: 420px;
-      overflow-y: auto;
-      margin-top: 12px;
-    }
-
-    .record-card {
-      background: white;
-      padding: 14px;
-      border-radius: 20px;
-      margin-bottom: 14px;
-      border-left: 4px solid #f4b942;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-      font-size: 0.85rem;
-      transition: all 0.1s;
-    }
-
-    .staff-role {
-      font-weight: 700;
-      color: #c96f0e;
-    }
-
-    .stats-preview {
-      background: #eef3fa;
-      border-radius: 24px;
-      padding: 18px;
-      margin-top: 20px;
-    }
-
-    footer {
-      background: #0a1c24;
-      color: #ddd;
-      padding: 30px 24px 20px;
-      font-size: 0.85rem;
-    }
-
-    .footer-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 30px;
-      margin-bottom: 25px;
-    }
-
-    .footer-col {
-      min-width: 150px;
-    }
-
-    .footer-col h4 {
-      color: #f4b942;
-      margin-bottom: 12px;
-    }
-
-    .social-icons a {
-      color: #f4b942;
-      margin-right: 18px;
-      font-size: 1.5rem;
-      transition: 0.2s;
-    }
-
-    .subscription-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .subscription-form input {
-      flex: 2;
-      padding: 10px;
-      border-radius: 50px;
-      border: none;
-    }
-
-    .sub-btn {
-      background: #f4b942;
-      border: none;
-      padding: 0 15px;
-      border-radius: 50px;
-      font-weight: bold;
-      cursor: pointer;
-      color: #0a2e38;
-    }
-
-    .copyright {
-      text-align: center;
-      border-top: 1px solid #2c4b56;
-      padding-top: 20px;
-      margin-top: 10px;
-    }
-
-    .feedback-message {
-      margin-top: 15px;
-      padding: 10px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .feedback-success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .feedback-error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    
-    .loading-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      backdrop-filter: blur(3px);
-    }
-    .spinner-card {
-      background: white;
-      padding: 30px 40px;
-      border-radius: 48px;
-      text-align: center;
-      box-shadow: 0 20px 30px rgba(0,0,0,0.2);
-    }
-    .spinner-card i {
-      font-size: 42px;
-      color: #f4b942;
-      margin-bottom: 16px;
-    }
-
-    @media (max-width: 780px) {
-      .navbar {
-        flex-direction: column;
-        text-align: center;
-      }
-      .dual-buttons {
-        flex-direction: column;
-      }
-    }
+    @media (max-width:720px) { .form-grid, .profile-grid { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
-<div class="app-container" id="mainApp">
-  <div class="navbar">
-    <div class="logo-area">
-      <div class="logo">MBAC</div>
-      <div class="college-name">
-        <h1>Malik Bin Anas College<br><span style="font-size:0.8rem;">Staff & Admin Portal</span></h1>
-        <p>Excellence • Integrity • Service</p>
+
+<div class="container">
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">MbAC</div>
+      <div>
+        <h1>Staff Panel</h1>
+        <div class="sub">Malik bin Anas College of West Africa</div>
       </div>
     </div>
-    <div class="datetime" id="liveDateTime"></div>
+    <div id="topbarActions"></div>
   </div>
 
-  <div class="dashboard">
-    <div class="form-section">
-      <h2><i class="fas fa-user-tie"></i> Staff Attendance Log</h2>
-      <div class="role-badge"><i class="fas fa-clock"></i> Auto check-out: +300 min (5h) | Precise override: +50 min</div>
-      <form id="staffPresenceForm">
-        <div class="form-group">
-          <label>Staff Full Name *</label>
-          <input type="text" name="staffName" id="staffName" placeholder="e.g., Dr. Fatmata Kargbo" required>
-        </div>
-        <div class="form-group">
-          <label>Staff ID / Employee Number *</label>
-          <input type="text" name="staffId" id="staffId" placeholder="MBAC-STAFF-XXXX" required>
-        </div>
-        <div class="form-group">
-          <label>Department / Unit *</label>
-          <select name="department" id="department">
-            <option>Academic Affairs</option>
-            <option>Administration & HR</option>
-            <option>Finance & Bursary</option>
-            <option>ICT & Systems</option>
-            <option>Student Services</option>
-            <option>Library & Resources</option>
-            <option>Maintenance & Facility</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Job Role / Designation *</label>
-          <select name="jobRole" id="jobRole">
-            <option>Senior Lecturer</option>
-            <option>Lecturer</option>
-            <option>Admin Officer</option>
-            <option>HOD</option>
-            <option>Registrar</option>
-            <option>IT Manager</option>
-            <option>Accountant</option>
-            <option>Support Staff</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>📅 Check-in Time (Arrival)</label>
-          <input type="text" name="checkInTime" id="checkInTime" readonly placeholder="Click 'Check-in' button">
-        </div>
-        <div class="form-group">
-          <label>⏰ Check-out Time (Departure) <span style="font-size:12px;">(auto +300min / precise override +50min)</span></label>
-          <input type="text" name="checkOutTime" id="checkOutTime" readonly placeholder="Will be set after check-in">
-        </div>
-        <div class="form-group">
-          <label>Digital Signature (Full Name) *</label>
-          <input type="text" name="signature" id="signatureName" placeholder="Type your full legal name as signature" required>
-        </div>
-        
-        <div class="dual-buttons">
-          <button type="button" class="btn btn-checkin" id="checkInBtnStaff"><i class="fas fa-clock"></i> Check-in (Start Duty)</button>
-          <button type="button" class="btn btn-checkout" id="checkOutBtnStaff"><i class="fas fa-hourglass-end"></i> Precise Override (+50 min)</button>
-        </div>
-        <button type="submit" class="btn" style="background:#f4b942; color:#0a2e38; margin-top: 10px;"><i class="fas fa-database"></i> Submit Attendance to Registry (Dual Sync)</button>
-      </form>
-      <div id="formFeedback" class="feedback-message"></div>
+  <!-- ANNOUNCEMENTS (visible after login) -->
+  <div id="announcementsWrap" class="announcements-panel hidden"></div>
+
+  <!-- REGISTRATION -->
+  <div id="registerView" class="card">
+    <h2><i class="fas fa-user-plus"></i> Staff Registration</h2>
+    <p class="hint">Fill in your details to register as a staff member.</p>
+
+    <div class="form-grid">
+      <div class="form-field"><label>Full Name</label><input type="text" id="regName" placeholder="e.g. Jane Doe" /></div>
+      <div class="form-field"><label>Staff ID Number</label><input type="text" id="regId" placeholder="e.g. STF-2025-001" /></div>
+      <div class="form-field">
+        <label>Department</label>
+        <select id="regDept">
+          <option value="">— Select department —</option>
+          <option value="Administration">Administration</option>
+          <option value="Finance">Finance</option>
+          <option value="Registrar">Registrar</option>
+          <option value="Library">Library</option>
+          <option value="IT">IT</option>
+          <option value="Security">Security</option>
+          <option value="Maintenance">Maintenance</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Role</label>
+        <select id="regRole">
+          <option value="Administrative">Administrative</option>
+          <option value="Finance Officer">Finance Officer</option>
+          <option value="Registrar">Registrar</option>
+          <option value="Librarian">Librarian</option>
+          <option value="IT Support">IT Support</option>
+          <option value="Security">Security</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Email</label><input type="email" id="regEmail" placeholder="staff@mbac.edu.gh" /></div>
+      <div class="form-field"><label>Phone</label><input type="text" id="regPhone" placeholder="+233 20 000 0000" /></div>
+      <div class="form-field"><label>National ID Number</label><input type="text" id="regNid" placeholder="GHA-XXXXXXXXX-X" /></div>
+      <div class="form-field"><label>NIN Number</label><input type="text" id="regNin" placeholder="NIN-XXXXXXXXX" /></div>
     </div>
 
-    <div class="history-section">
-      <h2><i class="fas fa-users"></i> Staff Attendance Log</h2>
-      <div id="historyList" class="history-list">
-        <p style="color:gray;">No staff records yet. Submit attendance to see log.</p>
-      </div>
-      <div class="stats-preview" id="statsPanel">
-        <h3><i class="fas fa-chart-simple"></i> Today's Staff Overview</h3>
-        <p id="statsText">📋 Total staff attended today: 0</p>
-        <p id="activeStatus">🟢 No open sessions</p>
-        <p id="adminNote"><i class="fas fa-info-circle"></i> Dual submission to central registries + local backup</p>
-      </div>
+    <div class="btn-row">
+      <button class="btn" id="registerBtn"><i class="fas fa-check-circle"></i> Register Staff</button>
+    </div>
+    <div class="error-msg" id="regError"></div>
+    <div style="text-align:center; margin-top:16px;">
+      <span style="font-size:13.5px; color:#6e86a5;">Already registered?</span>
+      <a href="#" id="goToLogin" style="color:#2b7de9; font-weight:600; text-decoration:none;">Login here</a>
     </div>
   </div>
 
-  <footer>
-    <div class="footer-grid">
-      <div class="footer-col">
-        <h4>Contact</h4>
-        <p><i class="fas fa-phone-alt"></i> +232-79-088-528 / +232-79-984-545 / +232-78-882-227</p>
-        <p><i class="fas fa-envelope"></i> mbacofwa26@gmail.com</p>
-        <p><i class="fas fa-map-marker-alt"></i>No. 2e Rokupa Estate, Rokupa, Freetown</p>
-      </div>	
-      <div class="footer-col">
-        <h4>Staff Resources</h4>
-        <p><i class="fas fa-calendar-alt"></i> Duty Roster</p>
-        <p><i class="fas fa-file-contract"></i> HR Policies</p>
-        <p><i class="fas fa-headset"></i> IT Support</p>
-      </div>
-      <div class="footer-col">
-        <h4>Follow Us</h4>
-        <div class="social-icons">
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin"></i></a>
-        </div>
-        <h4 style="margin-top:12px;">Staff Newsletter</h4>
-        <div class="subscription-form">
-          <input type="email" id="subEmail" placeholder="Work email">
-          <button class="sub-btn" id="subBtn">Subscribe</button>
-        </div>
+  <!-- LOGIN -->
+  <div id="loginView" class="card hidden">
+    <h2><i class="fas fa-sign-in-alt"></i> Staff Login</h2>
+    <p class="hint">Enter your name and staff ID to log in.</p>
+
+    <div class="form-grid">
+      <div class="form-field"><label>Full Name</label><input type="text" id="loginName" placeholder="e.g. Jane Doe" autocomplete="off" /></div>
+      <div class="form-field"><label>Staff ID Number</label><input type="text" id="loginId" placeholder="e.g. STF-2025-001" autocomplete="off" /></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="loginBtn"><i class="fas fa-arrow-right-to-bracket"></i> Login</button>
+    </div>
+    <div class="error-msg" id="loginError"></div>
+    <div style="text-align:center; margin-top:16px;">
+      <span style="font-size:13.5px; color:#6e86a5;">New staff member?</span>
+      <a href="#" id="goToRegister" style="color:#2b7de9; font-weight:600; text-decoration:none;">Register here</a>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboardView" class="hidden">
+    <div class="card">
+      <h2><i class="fas fa-id-badge"></i> Welcome, <span id="dashName"></span></h2>
+      <p class="hint">Your registered credentials.</p>
+
+      <div class="profile-grid">
+        <div class="profile-item"><div class="lbl">Staff ID</div><div class="val" id="dashStaffId"></div></div>
+        <div class="profile-item"><div class="lbl">Department</div><div class="val" id="dashDept"></div></div>
+        <div class="profile-item"><div class="lbl">Role</div><div class="val" id="dashRole"></div></div>
+        <div class="profile-item"><div class="lbl">Email</div><div class="val" id="dashEmail"></div></div>
+        <div class="profile-item"><div class="lbl">Phone</div><div class="val" id="dashPhone"></div></div>
+        <div class="profile-item"><div class="lbl">National ID</div><div class="val" id="dashNid"></div></div>
+        <div class="profile-item"><div class="lbl">NIN</div><div class="val" id="dashNin"></div></div>
+        <div class="profile-item"><div class="lbl">Registered</div><div class="val" id="dashCreated"></div></div>
       </div>
     </div>
-    <div class="copyright">
-      &copy; 2025 Malik Bin Anas College of West Africa | Staff Attendance System • Integrity & Accountability
-    </div>
-  </footer>
+  </div>
 </div>
 
-<script>
-  // ======================= LIVE DATE & TIME =========================
-  function updateDateTime() {
-    const now = new Date();
-    const formatted = now.toLocaleString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second:'2-digit' });
-    document.getElementById('liveDateTime').innerHTML = `<i class="far fa-calendar-alt"></i> ${formatted}`;
+<div id="confirmModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <h3><i class="fas fa-circle-question" style="color:#3a6ea5;"></i> Confirm Registration</h3>
+    <p>Do you confirm that all details entered are correct?</p>
+    <div class="buttons">
+      <button class="btn" id="confirmYes"><i class="fas fa-check"></i> Yes</button>
+      <button class="btn secondary" id="confirmNo"><i class="fas fa-xmark"></i> No</button>
+    </div>
+  </div>
+</div>
+
+<div id="welcomeModal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div style="font-size:44px; margin-bottom:10px;">🎉</div>
+    <h3>Welcome, <span id="welcomeName"></span>!</h3>
+    <p>Your registration is complete. Log in below with your name and staff ID.</p>
+    <div class="buttons"><button class="btn" id="welcomeContinue">Continue to Login</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL = 'https://tvbuxljxkvflntjububs.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2YnV4bGp4a3ZmbG50anVidWJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwMzAzOTYsImV4cCI6MjExMDYwNjM5Nn0.74vBpNRFSWwyqIAMnakvA0NhSst2Qnzh4tIzFmvt65g';
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// DOM
+const registerView = document.getElementById('registerView');
+const loginView = document.getElementById('loginView');
+const dashboardView = document.getElementById('dashboardView');
+const topbarActions = document.getElementById('topbarActions');
+const announcementsWrap = document.getElementById('announcementsWrap');
+
+const regName = document.getElementById('regName'), regId = document.getElementById('regId');
+const regDept = document.getElementById('regDept'), regRole = document.getElementById('regRole');
+const regEmail = document.getElementById('regEmail'), regPhone = document.getElementById('regPhone');
+const regNid = document.getElementById('regNid'), regNin = document.getElementById('regNin');
+const regError = document.getElementById('regError'), registerBtn = document.getElementById('registerBtn');
+
+const loginName = document.getElementById('loginName'), loginId = document.getElementById('loginId');
+const loginBtn = document.getElementById('loginBtn'), loginError = document.getElementById('loginError');
+
+const dashName = document.getElementById('dashName'), dashStaffId = document.getElementById('dashStaffId');
+const dashDept = document.getElementById('dashDept'), dashRole = document.getElementById('dashRole');
+const dashEmail = document.getElementById('dashEmail'), dashPhone = document.getElementById('dashPhone');
+const dashNid = document.getElementById('dashNid'), dashNin = document.getElementById('dashNin');
+const dashCreated = document.getElementById('dashCreated');
+
+const goToLogin = document.getElementById('goToLogin'), goToRegister = document.getElementById('goToRegister');
+const confirmModal = document.getElementById('confirmModal'), confirmYes = document.getElementById('confirmYes'), confirmNo = document.getElementById('confirmNo');
+const welcomeModal = document.getElementById('welcomeModal'), welcomeName = document.getElementById('welcomeName'), welcomeContinue = document.getElementById('welcomeContinue');
+const toast = document.getElementById('toast');
+
+let currentStaff = null;
+let pendingRegistration = null;
+
+function showToast(msg, type='info') {
+  toast.textContent = msg;
+  toast.className = 'toast show ' + (type === 'error' ? 'error' : type === 'success' ? 'success' : '');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.className = 'toast', 3500);
+}
+function esc(s) { if (s == null) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDateTime(iso) { if (!iso) return '—'; const d = new Date(iso); return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' · ' + d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+
+function switchView(view) {
+  registerView.classList.add('hidden'); loginView.classList.add('hidden'); dashboardView.classList.add('hidden');
+  announcementsWrap.classList.add('hidden');
+  topbarActions.innerHTML = '';
+  if (view === 'register') registerView.classList.remove('hidden');
+  else if (view === 'login') loginView.classList.remove('hidden');
+  else if (view === 'dashboard') {
+    dashboardView.classList.remove('hidden');
+    announcementsWrap.classList.remove('hidden');
+    const btn = document.createElement('button');
+    btn.className = 'btn secondary';
+    btn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+    btn.onclick = logout;
+    topbarActions.appendChild(btn);
+    loadAnnouncements();
   }
-  updateDateTime();
-  setInterval(updateDateTime, 1000);
+}
 
-  // ======================= STORAGE FOR STAFF RECORDS =================
-  let staffAttendanceRecords = [];
-  let lastCheckInDateObject = null;   // store JS Date when check-in clicked, used for precise override
+// REGISTRATION
+registerBtn.addEventListener('click', () => {
+  regError.textContent = '';
+  const name = regName.value.trim(), id = regId.value.trim();
+  const dept = regDept.value, role = regRole.value;
+  if (!name || !id || !dept) { regError.textContent = 'Please fill in name, ID and department.'; return; }
+  pendingRegistration = {
+    p_full_name: name, p_staff_id: id, p_department: dept, p_role: role,
+    p_email: regEmail.value.trim(), p_phone: regPhone.value.trim(),
+    p_national_id: regNid.value.trim(), p_nin: regNin.value.trim()
+  };
+  confirmModal.classList.remove('hidden');
+});
 
-  function loadStaffHistory() {
-    const stored = localStorage.getItem('mbac_staff_attendance');
-    if(stored) {
-      staffAttendanceRecords = JSON.parse(stored);
-    } else {
-      staffAttendanceRecords = [];
-    }
-    renderStaffHistory();
-    updateStaffStats();
+confirmNo.addEventListener('click', () => { confirmModal.classList.add('hidden'); pendingRegistration = null; });
+
+confirmYes.addEventListener('click', async () => {
+  confirmModal.classList.add('hidden');
+  if (!pendingRegistration) return;
+  registerBtn.disabled = true;
+  registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registering…';
+  try {
+    const { data, error } = await supabase.rpc('register_staff', pendingRegistration);
+    if (error) throw error;
+    const result = data[0];
+    if (!result.success) { regError.textContent = result.message; return; }
+    welcomeName.textContent = pendingRegistration.p_full_name;
+    welcomeModal.classList.remove('hidden');
+  } catch (err) {
+    console.error(err);
+    regError.textContent = err.message || 'Registration failed.';
+  } finally {
+    registerBtn.disabled = false;
+    registerBtn.innerHTML = '<i class="fas fa-check-circle"></i> Register Staff';
   }
+});
 
-  function saveStaffToLocal() {
-    localStorage.setItem('mbac_staff_attendance', JSON.stringify(staffAttendanceRecords));
-    renderStaffHistory();
-    updateStaffStats();
+welcomeContinue.addEventListener('click', () => {
+  welcomeModal.classList.add('hidden');
+  loginName.value = pendingRegistration.p_full_name;
+  loginId.value = pendingRegistration.p_staff_id;
+  pendingRegistration = null;
+  switchView('login');
+});
+
+// LOGIN
+loginBtn.addEventListener('click', async () => {
+  loginError.textContent = '';
+  const name = loginName.value.trim(), id = loginId.value.trim();
+  if (!name || !id) { loginError.textContent = 'Please enter both fields.'; return; }
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in…';
+  try {
+    const { data, error } = await supabase.rpc('login_staff', { p_full_name: name, p_staff_id: id });
+    if (error) throw error;
+    if (!data || data.length === 0) { loginError.textContent = 'No staff found with that name and ID.'; return; }
+    currentStaff = data[0];
+    try {
+      await supabase.rpc('log_staff_login', { p_staff_id: currentStaff.staff_id, p_user_agent: navigator.userAgent.substring(0,200) });
+    } catch (logErr) { console.warn('Log failed:', logErr); }
+    showDashboard();
+  } catch (err) {
+    console.error(err);
+    loginError.textContent = err.message || 'Login failed.';
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = '<i class="fas fa-arrow-right-to-bracket"></i> Login';
   }
+});
 
-  function renderStaffHistory() {
-    const historyDiv = document.getElementById('historyList');
-    if(staffAttendanceRecords.length === 0) {
-      historyDiv.innerHTML = '<p style="color:gray;"><i class="fas fa-folder-open"></i> No staff attendance logged yet. Submit record.</p>';
+function showDashboard() {
+  dashName.textContent = currentStaff.full_name;
+  dashStaffId.textContent = currentStaff.staff_id;
+  dashDept.textContent = currentStaff.department;
+  dashRole.textContent = currentStaff.role;
+  dashEmail.textContent = currentStaff.email || '—';
+  dashPhone.textContent = currentStaff.phone || '—';
+  dashNid.textContent = currentStaff.national_id || '—';
+  dashNin.textContent = currentStaff.nin || '—';
+  dashCreated.textContent = fmtDateTime(currentStaff.created_at);
+  switchView('dashboard');
+}
+
+function logout() {
+  currentStaff = null;
+  loginName.value = ''; loginId.value = '';
+  switchView('login');
+  showToast('Logged out.', 'info');
+}
+
+// ANNOUNCEMENTS
+async function loadAnnouncements() {
+  try {
+    const { data, error } = await supabase.rpc('get_announcements_for_audience', { p_audience: 'staff' });
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      announcementsWrap.innerHTML = '<div style="text-align:center;padding:18px;background:#fff;border-radius:20px;color:#8aa4c1;font-style:italic;font-size:13.5px;border:1px solid #e7eff9;">No announcements at this time.</div>';
       return;
     }
-    historyDiv.innerHTML = staffAttendanceRecords.slice().reverse().map(rec => `
-      <div class="record-card">
-        <strong><i class="fas fa-id-badge"></i> ${escapeHtml(rec.staffName)}</strong> (${escapeHtml(rec.staffId)})<br>
-        <span class="staff-role"><i class="fas fa-briefcase"></i> ${escapeHtml(rec.department)} • ${escapeHtml(rec.jobRole)}</span><br>
-        🕒 <strong>IN:</strong> ${escapeHtml(rec.checkInTime || '—')} &nbsp; | &nbsp; <strong>OUT:</strong> ${escapeHtml(rec.checkOutTime || '—')}<br>
-        ✍️ <em>Signed:</em> ${escapeHtml(rec.signature)}<br>
-        <small><i class="far fa-calendar-check"></i> Logged: ${escapeHtml(rec.submitTimestamp)}</small>
+    announcementsWrap.innerHTML = data.map(a => `
+      <div class="announcement-card ${esc(a.priority)} ${esc(a.type)}">
+        <div class="announcement-head">
+          <div class="announcement-title">${esc(a.title)}</div>
+          <div class="announcement-tags">
+            <span class="announcement-tag ${esc(a.type)}">${esc(a.type)}</span>
+            <span class="announcement-tag ${esc(a.priority)}">${esc(a.priority)}</span>
+          </div>
+        </div>
+        <div class="announcement-body">${esc(a.body)}</div>
+        <div class="announcement-meta">
+          <span><i class="fas fa-user"></i> ${esc(a.created_by)}</span>
+          <span><i class="fas fa-clock"></i> ${fmtDateTime(a.created_at)}</span>
+        </div>
       </div>
     `).join('');
+  } catch (err) {
+    console.error('Announcements error:', err);
+    announcementsWrap.innerHTML = '';
   }
+}
 
-  function escapeHtml(str) {
-    if(!str) return '';
-    return str.replace(/[&<>]/g, function(m) {
-      if(m === '&') return '&amp;';
-      if(m === '<') return '&lt;';
-      if(m === '>') return '&gt;';
-      return m;
-    });
-  }
+// NAV
+goToLogin.addEventListener('click', e => { e.preventDefault(); switchView('login'); });
+goToRegister.addEventListener('click', e => { e.preventDefault(); switchView('register'); });
 
-  function updateStaffStats() {
-    const today = new Date().toISOString().slice(0,10);
-    const todaysRecords = staffAttendanceRecords.filter(rec => rec.submitTimestamp?.startsWith(today));
-    const statsText = document.getElementById('statsText');
-    statsText.innerHTML = `📊 Staff attended today: ${todaysRecords.length}`;
-    
-    const openSessions = staffAttendanceRecords.filter(rec => {
-      const outValue = rec.checkOutTime;
-      return (outValue === 'Not checked out' || outValue === '' || outValue === null || outValue === '—');
-    });
-    const activeStatus = document.getElementById('activeStatus');
-    if(openSessions.length > 0) {
-      activeStatus.innerHTML = `⚠️ ${openSessions.length} staff member(s) currently checked-in (no checkout yet)`;
-    } else {
-      activeStatus.innerHTML = '✅ All staff duty sessions completed today.';
-    }
-  }
-
-  function formatDateFromDateObj(dateObj) {
-    return dateObj.toLocaleString('en-GB', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  }
-
-  // Add minutes to a date object and return formatted string
-  function addMinutesToDate(date, minutes) {
-    const newDate = new Date(date);
-    newDate.setMinutes(newDate.getMinutes() + minutes);
-    return newDate;
-  }
-
-  // ========== CHECK-IN: record check-in + AUTO set checkout (+300 minutes) ==========
-  document.getElementById('checkInBtnStaff').addEventListener('click', () => {
-    const inField = document.getElementById('checkInTime');
-    const outField = document.getElementById('checkOutTime');
-    const now = new Date();
-    const checkInStr = formatDateFromDateObj(now);
-    inField.value = checkInStr;
-    
-    // Store the exact check-in date object for later precise override
-    lastCheckInDateObject = new Date(now);
-    
-    // Auto-set checkout time as 300 minutes (5 hours) after check-in
-    const autoCheckoutDate = addMinutesToDate(now, 300);
-    const autoCheckoutStr = formatDateFromDateObj(autoCheckoutDate);
-    outField.value = autoCheckoutStr;
-    
-    showFeedback(`✅ Check-in at ${checkInStr}. Auto check-out set to +300 minutes (5h) → ${autoCheckoutStr}. Use "Precise Override" for +50 min.`, 'success');
-  });
-
-  // ========== PRECISE OVERRIDE: set check-out time to check-in + 50 minutes ==========
-  document.getElementById('checkOutBtnStaff').addEventListener('click', () => {
-    const inField = document.getElementById('checkInTime');
-    const outField = document.getElementById('checkOutTime');
-    
-    if (!inField.value || inField.value.trim() === '') {
-      showFeedback('❌ Cannot set precise checkout: No check-in time found. Please click "Check-in" first.', 'error');
-      return;
-    }
-    
-    // Use stored lastCheckInDateObject if available, otherwise parse from input field
-    let checkInDate = lastCheckInDateObject;
-    if (!checkInDate && inField.value) {
-      // fallback parse (supports 'DD/MM/YYYY, HH:MM:SS')
-      const parts = inField.value.match(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}):(\d{2}):(\d{2})/);
-      if (parts) {
-        const [_, day, month, year, hour, minute, second] = parts;
-        checkInDate = new Date(`${year}-${month}-${day}T${hour}:${minute}:${second}`);
-      } else {
-        checkInDate = new Date(); // fallback but unlikely
-      }
-    }
-    
-    if (!checkInDate || isNaN(checkInDate.getTime())) {
-      showFeedback('⚠️ Could not determine check-in timestamp. Please check-in again.', 'error');
-      return;
-    }
-    
-    // precise override: +50 minutes from check-in
-    const preciseOutDate = addMinutesToDate(checkInDate, 50);
-    const preciseOutStr = formatDateFromDateObj(preciseOutDate);
-    outField.value = preciseOutStr;
-    
-    showFeedback(`⏱️ Precise override: Check-out set to exactly 50 minutes after check-in → ${preciseOutStr}`, 'success');
-  });
-
-  function showFeedback(message, type) {
-    const feedbackDiv = document.getElementById('formFeedback');
-    feedbackDiv.innerHTML = message;
-    feedbackDiv.className = `feedback-message feedback-${type}`;
-    setTimeout(() => {
-      if(feedbackDiv.innerHTML === message) feedbackDiv.innerHTML = '';
-      feedbackDiv.className = 'feedback-message';
-    }, 4500);
-  }
-
-  // Dual submission to both Formspree endpoints
-  async function submitToBothFormspree(recordData) {
-    const formDataObj = new FormData();
-    formDataObj.append('Staff Name', recordData.staffName);
-    formDataObj.append('Staff ID', recordData.staffId);
-    formDataObj.append('Department', recordData.department);
-    formDataObj.append('Job Role', recordData.jobRole);
-    formDataObj.append('Check-In DateTime', recordData.checkInTime);
-    formDataObj.append('Check-Out DateTime', recordData.checkOutTime);
-    formDataObj.append('Signature', recordData.signature);
-    formDataObj.append('Submission Timestamp', recordData.submitTimestamp);
-    formDataObj.append('_subject', 'MBAC Staff Attendance Record (dual sync)');
-    
-    const endpoints = [
-      'https://formspree.io/f/mbdwwnjr',
-      'https://formspree.io/f/mojrrkaq'
-    ];
-    
-    const fetchPromises = endpoints.map(async (url) => {
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          body: formDataObj,
-          headers: { 'Accept': 'application/json' }
-        });
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`);
-        }
-        return { url, success: true };
-      } catch (err) {
-        console.error(`Formspree error (${url}):`, err);
-        return { url, success: false, error: err.message };
-      }
-    });
-    
-    const results = await Promise.allSettled(fetchPromises);
-    const allOk = results.every(r => r.status === 'fulfilled' && r.value?.success === true);
-    return { allOk, results };
-  }
-
-  function showLoadingOverlay() {
-    let overlay = document.getElementById('submissionLoadingOverlay');
-    if(!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'submissionLoadingOverlay';
-      overlay.className = 'loading-overlay';
-      overlay.innerHTML = `<div class="spinner-card"><i class="fas fa-spinner fa-pulse fa-3x"></i><h3>Syncing attendance...</h3><p>Submitting to dual registries & local storage</p></div>`;
-      document.body.appendChild(overlay);
-    } else {
-      overlay.style.display = 'flex';
-    }
-  }
-  
-  function hideLoadingOverlay() {
-    const overlay = document.getElementById('submissionLoadingOverlay');
-    if(overlay) overlay.style.display = 'none';
-  }
-  
-  function redirectToThankYouPage() {
-    const thankYouHTML = `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Thank You | MBAC Attendance</title>
-      <style>
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif; }
-        body { background: linear-gradient(135deg, #0a2e38 0%, #1a5f6e 100%); min-height:100vh; display: flex; align-items:center; justify-content:center; padding:24px; }
-        .thanks-card { max-width:550px; background:white; border-radius:48px; padding:40px 32px; text-align:center; box-shadow:0 25px 45px rgba(0,0,0,0.3); }
-        .thanks-icon { background:#f4b942; width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; }
-        .thanks-icon i { font-size:42px; color:#0a2e38; }
-        h1 { color:#0a2e38; margin-bottom:12px; font-size:2rem; }
-        p { color:#2c5a66; margin-bottom:24px; line-height:1.5; }
-        .btn-home { background:#f4b942; border:none; padding:12px 28px; border-radius:60px; font-weight:bold; font-size:1rem; color:#0a2e38; cursor:pointer; text-decoration:none; display:inline-block; transition:0.2s; margin-top:8px; }
-        .btn-home:hover { background:#e0a72b; transform:scale(1.02); }
-        .footer-small { margin-top:28px; font-size:0.75rem; color:#6c8d96; }
-      </style>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    </head>
-    <body>
-      <div class="thanks-card">
-        <div class="thanks-icon"><i class="fas fa-check-double"></i></div>
-        <h1>Attendance Registered</h1>
-        <p><strong>Malik Bin Anas College</strong><br>Your staff attendance has been successfully submitted to both central registries + local archive.<br>Thank you for your integrity & service.</p>
-        <a href="javascript:void(0)" onclick="window.location.href = window.location.origin + window.location.pathname" class="btn-home"><i class="fas fa-arrow-left"></i> Return to Attendance Hub</a>
-        <div class="footer-small"><i class="fas fa-shield-alt"></i> MBAC Staff Portal • Record synced securely</div>
-      </div>
-    </body>
-    </html>`;
-    window.location.href = "data:text/html;charset=utf-8," + encodeURIComponent(thankYouHTML);
-  }
-  
-  // Handle Form Submission (Local + dual Formspree + redirect)
-  const staffForm = document.getElementById('staffPresenceForm');
-  let isSubmitting = false;
-  
-  staffForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if(isSubmitting) {
-      showFeedback('Submission in progress, please wait...', 'error');
-      return;
-    }
-    
-    const staffName = document.getElementById('staffName').value.trim();
-    const staffId = document.getElementById('staffId').value.trim();
-    const department = document.getElementById('department').value;
-    const jobRole = document.getElementById('jobRole').value;
-    const checkInTime = document.getElementById('checkInTime').value;
-    const checkOutTime = document.getElementById('checkOutTime').value;
-    const signature = document.getElementById('signatureName').value.trim();
-    
-    if(!staffName) { showFeedback('❌ Staff full name is required!', 'error'); document.getElementById('staffName').focus(); return; }
-    if(!staffId) { showFeedback('❌ Staff ID / Employee number is required!', 'error'); document.getElementById('staffId').focus(); return; }
-    if(!signature) { showFeedback('❌ Digital signature (full name) is mandatory!', 'error'); document.getElementById('signatureName').focus(); return; }
-    if(!checkInTime) { showFeedback('⚠️ Please click "Check-in" before submitting attendance.', 'error'); return; }
-    
-    const finalCheckOut = (checkOutTime && checkOutTime.trim() !== '') ? checkOutTime : 'Not checked out';
-    const newAttendance = {
-      staffName, staffId, department, jobRole, checkInTime,
-      checkOutTime: finalCheckOut, signature,
-      submitTimestamp: new Date().toLocaleString()
-    };
-    
-    staffAttendanceRecords.push(newAttendance);
-    saveStaffToLocal();
-    
-    isSubmitting = true;
-    showLoadingOverlay();
-    
-    await submitToBothFormspree(newAttendance);
-    
-    hideLoadingOverlay();
-    isSubmitting = false;
-    
-    // Reset time fields and signature after submission (keep name/id for convenience)
-    document.getElementById('checkInTime').value = '';
-    document.getElementById('checkOutTime').value = '';
-    document.getElementById('signatureName').value = '';
-    lastCheckInDateObject = null;
-    
-    showFeedback('✔ Attendance recorded locally & synced to dual registries. Redirecting...', 'success');
-    setTimeout(() => redirectToThankYouPage(), 800);
-  });
-  
-  // Newsletter subscription
-  document.getElementById('subBtn').addEventListener('click', () => {
-    const email = document.getElementById('subEmail').value.trim();
-    if(email && email.includes('@') && email.includes('.')) {
-      alert(`✅ Thank you ${email}! You will receive MBAC staff announcements.`);
-      document.getElementById('subEmail').value = '';
-    } else {
-      alert('❌ Please enter a valid staff email address (e.g., name@mbac.edu.sl)');
-    }
-  });
-  
-  loadStaffHistory();
+switchView('register');
 </script>
 </body>
 </html>
